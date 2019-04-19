@@ -317,3 +317,7 @@ def process_twitter_log_file(filename):
             probs.append(0)                    
                 
     return texts,langs,probs
+
+
+def split_into_batches(l,n):
+    return [l[i:i + n] for i in range(0, len(l), n)]

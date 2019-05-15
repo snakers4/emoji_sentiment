@@ -16,6 +16,9 @@ batches = split_into_batches(archive_files,200)
 print('Processing {} batches'.format(len(batches)))
 
 for i,batch in enumerate(batches):
+    if i<1059:
+        continue
+    print('Processing batch {}'.format(str(i).zfill(6)))
     try:
         results = list_multiprocessing(batch,
                                        process_twitter_log_file,
@@ -42,4 +45,4 @@ for i,batch in enumerate(batches):
         df.to_feather(OUTPUT.format(str(i).zfill(6)))
     except Exception as e: 
         print('Problem with batch {}'.format(i))
-        print(e)        
+        print(e)

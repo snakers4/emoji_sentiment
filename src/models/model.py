@@ -439,12 +439,13 @@ class EmbeddingVocabulary(nn.Module):
                  input_matrix=None,
                  device=None,
                  input_shape=None):
-        super(BertEmbeddings, self).__init__()
+        super(EmbeddingVocabulary, self).__init__()
         assert ' ' in ngram_dict
+        self.ngram_dict = ngram_dict
         if input_matrix is None:
             assert input_shape[0] == len(self.ngram_dict)  
-            self.word_embeddings = nn.Embedding(config.vocab_size,
-                                                config.hidden_size)             
+            self.word_embeddings = nn.Embedding(input_shape[0],
+                                                input_shape[1])             
         else:
             assert input_matrix.shape == input_shape
             assert len(self.ngram_dict) == input_matrix.shape[0]
@@ -463,7 +464,7 @@ class EmbeddingVocabulary(nn.Module):
         # embeddings = words_embeddings + position_embeddings + token_type_embeddings
         # embeddings = self.LayerNorm(embeddings)
         # embeddings = self.dropout(embeddings)
-        return embeddings
+        return words_embeddings
     
 
 # TODO
@@ -831,6 +832,7 @@ def main():
     c_lengths = (torch.ones(2,1)*6).long()
     out = model(c_seq,c_cat,c_lengths)
     print(out.size())
+    print()
 
     print('Testing attention')
     # test attention
@@ -841,6 +843,7 @@ def main():
     c_lengths = (torch.ones(2,1)*6).long()
     out = model(c_seq,c_cat,c_lengths)
     print(out.size())
+    print()
 
     print('Testing multi-head attention')
     # test multi-head attention
@@ -851,6 +854,7 @@ def main():
     c_lengths = (torch.ones(2,1)*6).long()
     out = model(c_seq,c_cat,c_lengths)
     print(torch.stack(out,dim=1).size())
+    print()
 
     print('Testing bag with attention')
     # test bag with attention
@@ -861,7 +865,21 @@ def main():
     c_cat = torch.zeros(2,1,6).long()
     c_lengths = (torch.ones(2,1)*6).long()
     out = model(c_seq,c_cat,c_lengths)
-    print(out.size())    
+    print(out.size())
+    print()
+
+    print('Testing plain embedding dictionary')
+    # plain embedding bag test case
+    config = SentimentConfig.from_dict({**copy.deepcopy(config_dict),
+                                        **{'embedding_type':'dict'}})
+    model = SentimentClassifier(config)
+    c_seq = torch.LongTensor([[0,0,0,0,0,0],
+                              [0,0,0,0,0,0]])
+    c_cat = torch.zeros(2,1,6).long()
+    c_lengths = (torch.ones(2,1)*6).long()
+    out = model(c_seq,c_cat,c_lengths)
+    print(out.size())
+    print()
 
 if __name__ == '__main__':
     main()    

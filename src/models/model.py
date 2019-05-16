@@ -29,7 +29,7 @@ class SentimentConfig(object):
                  
                  cat_sizes=None, # categorical embeddings
                  
-                 embedding_type='dict', # dict, bag, wbag, char
+                 embedding_type='dict', # dict, bag, wbag, char, bpe
                  emb_matrix=None, # set to None
                  emb_dict=None,
                  emb_shape=(1,50),
@@ -159,7 +159,7 @@ class SentimentClassifier(nn.Module):
                                             device=self.config.device,
                                             input_shape=self.config.emb_shape,
                                             att_module=SelfAttentionEmb(self.config.emb_shape[1]))            
-        elif self.config.embedding_type=='dict':
+        elif self.config.embedding_type=='dict' or self.config.embedding_type=='bpe':
             self.emb = EmbeddingVocabulary(ngram_dict=self.config.emb_dict,
                                            input_matrix=self.config.emb_matrix,
                                            device=self.config.device,

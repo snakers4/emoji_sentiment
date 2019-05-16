@@ -343,7 +343,7 @@ class SentimentClassifier(nn.Module):
             for clf, rep in zip(self.clf,all_representations):
                 outs.append(clf(rep))
             # a list of logits
-            return outs
+            return torch.cat(outs, dim=1)
     
     @staticmethod
     def get_param_size(model):
@@ -785,6 +785,7 @@ class Tokenizer(object):
 def main():
     import gc
     import copy
+    from string import printable    
     from string import punctuation
     
     device = torch.device('cpu')
@@ -847,13 +848,14 @@ def main():
 
     print('Testing multi-head attention')
     # test multi-head attention
-    config = SentimentConfig.from_dict({**copy.deepcopy(config_dict),**{'pooling_type':5}})
+    config = SentimentConfig.from_dict({**copy.deepcopy(config_dict),**{'pooling_type':11,
+                                                                        'classifier_mlp_sizes':[300,128,1]}})
     model = SentimentClassifier(config)
     c_seq = np.asarray(['The cat is on the mat'.split(' '), 'And it is quite well fed'.split(' ')]).reshape(-1)
     c_cat = torch.zeros(2,1,6).long()
     c_lengths = (torch.ones(2,1)*6).long()
     out = model(c_seq,c_cat,c_lengths)
-    print(torch.stack(out,dim=1).size())
+    print(out.size())
     print()
 
     print('Testing bag with attention')

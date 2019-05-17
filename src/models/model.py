@@ -440,7 +440,7 @@ class EmbeddingVocabulary(nn.Module):
                  device=None,
                  input_shape=None):
         super(EmbeddingVocabulary, self).__init__()
-        assert ' ' in ngram_dict
+        # assert ' ' in ngram_dict
         self.ngram_dict = ngram_dict
         if input_matrix is None:
             assert input_shape[0] == len(self.ngram_dict)  

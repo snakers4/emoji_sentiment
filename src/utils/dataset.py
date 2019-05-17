@@ -132,7 +132,7 @@ class EmotionDataset(data.Dataset):
         # in case of embedding bags - we return text numpy arrays
         return_tuple = (
             return_object,
-            target,
-            seq_len
+            seq_len,
+            target
         )
         return return_tuple
